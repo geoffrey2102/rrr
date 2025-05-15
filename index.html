@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcular Precio de Envío</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #resultado {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Calcular Precio de Envío</h1>
+    <div class="form-group">
+        <label for="peso">Peso (kg):</label>
+        <input type="number" id="peso" step="0.1" min="0" required>
+    </div>
+    <div class="form-group">
+        <label for="inicio">Ciudad de Inicio:</label>
+        <select id="inicio" required>
+            <option value="">Seleccione una ciudad</option>
+            <option value="Lima">Lima</option>
+            <option value="Arequipa">Arequipa</option>
+            <option value="Trujillo">Trujillo</option>
+            <option value="Chiclayo">Chiclayo</option>
+            <option value="Piura">Piura</option>
+            <option value="Cusco">Cusco</option>
+            <option value="Iquitos">Iquitos</option>
+            <option value="Huancayo">Huancayo</option>
+            <option value="Pucallpa">Pucallpa</option>
+            <option value="Tacna">Tacna</option>
+            <option value="Ayacucho">Ayacucho</option>
+            <option value="Chimbote">Chimbote</option>
+            <option value="Ica">Ica</option>
+            <option value="Juliaca">Juliaca</option>
+            <option value="Tarapoto">Tarapoto</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="llegada">Ciudad de Llegada:</label>
+        <select id="llegada" required>
+            <option value="">Seleccione una ciudad</option>
+            <option value="Lima">Lima</option>
+            <option value="Arequipa">Arequipa</option>
+            <option value="Trujillo">Trujillo</option>
+            <option value="Chiclayo">Chiclayo</option>
+            <option value="Piura">Piura</option>
+            <option value="Cusco">Cusco</option>
+            <option value="Iquitos">Iquitos</option>
+            <option value="Huancayo">Huancayo</option>
+            <option value="Pucallpa">Pucallpa</option>
+            <option value="Tacna">Tacna</option>
+            <option value="Ayacucho">Ayacucho</option>
+            <option value="Chimbote">Chimbote</option>
+            <option value="Ica">Ica</option>
+            <option value="Juliaca">Juliaca</option>
+            <option value="Tarapoto">Tarapoto</option>
+        </select>
+    </div>
+    <button onclick="calcularPrecio()">Calcular Precio</button>
+    <div id="resultado"></div>
+
+    <script>
+        async function calcularPrecio() {
+            const peso = document.getElementById('peso').value;
+            const inicio = document.getElementById('inicio').value;
+            const llegada = document.getElementById('llegada').value;
+            const resultadoDiv = document.getElementById('resultado');
+
+            if (!peso || !inicio || !llegada) {
+                resultadoDiv.innerHTML = 'Por favor, complete todos los campos';
+                return;
+            }
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ peso, inicio, llegada })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultadoDiv.innerHTML = `Precio estimado: ${data.precio_predicho}`;
+                } else {
+                    resultadoDiv.innerHTML = `Error: ${data.error}`;
+                }
+            } catch (error) {
+                resultadoDiv.innerHTML = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
